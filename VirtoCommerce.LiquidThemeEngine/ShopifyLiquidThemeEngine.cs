@@ -386,7 +386,7 @@ namespace VirtoCommerce.LiquidThemeEngine
 
                 JObject result;
                 var baseThemeSettings = new JObject();
-                var currentThemeSettings = result = InnerGetAllSettings(_themeBlobProvider, CurrentThemeSettingPath);
+                var currentThemeSettings = InnerGetAllSettings(_themeBlobProvider, CurrentThemeSettingPath);
 
                 //Try to load settings from base theme path and merge them with resources for local theme
                 if ((_options.MergeBaseSettings || currentThemeSettings == null) && !string.IsNullOrEmpty(BaseThemeSettingPath))
@@ -524,8 +524,16 @@ namespace VirtoCommerce.LiquidThemeEngine
 
         private string GetSettingsFilePath()
         {
+            const string defaultSettingsPath = "settings_data.json";
             var prefix = _httpContextAccessor.HttpContext.Request.Query["preview_mode"];
-            return prefix.ToString().IsNullOrEmpty() ? "settings_data.json" : $"drafts\\{prefix}_settings_data.json";
+            if (!prefix.ToString().IsNullOrEmpty())
+            {
+                var result = Path.Combine("drafts", $"{prefix}_{defaultSettingsPath}");
+                if (_themeBlobProvider.PathExists(Path.Combine("config", result)))
+                    return result;
+            }
+
+            return defaultSettingsPath;
         }
 
         public bool IsFeatureActive(string featureName)

@@ -80,7 +80,7 @@ namespace VirtoCommerce.LiquidThemeEngine
             }
             var scriptObject = workContext.ToScriptObject();
 
-            var viewToRender = workContext.TemplateConfig == null || workContext.IsPreviewMode ? _viewName : "template-render";
+            var viewToRender = workContext.TemplateConfig == null ? _viewName : "template-render";
             var result = await _liquidThemeEngine.RenderTemplateByNameAsync(viewToRender, scriptObject);
 
             // don't use layouts for partial views when masterViewName is not specified
